@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dapper;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project_One.Gateway
 {
@@ -14,6 +14,25 @@ namespace Project_One.Gateway
         public static string GetConnection()
         {
             return Type == "pro" ? ProdConnectionString : DevConnectionString;
+        }
+
+        public static dynamic GetQueryFirst<T>( string query)
+        {
+            using IDbConnection con = new SqlConnection(GetConnection());
+            dynamic data = con.Query<T>(query).FirstOrDefault();
+            return data;
+        }
+        public static dynamic GetQueryList<T>(string query)
+        {
+            using IDbConnection con = new SqlConnection(GetConnection());
+            dynamic data = con.Query<T>(query).ToList();
+            return data;
+        }
+        public static dynamic GetExecute(string query)
+        {
+            using IDbConnection con = new SqlConnection(GetConnection());
+            dynamic data = con.Execute(query);
+            return data;
         }
     }
 }
